@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		.box{
+			width: 106px;
+			height: 34px;
+			border: 1px solid #ccc;
+			margin: 0 auto;
+			box-sizing: border-box;
+			position: relative;
+			overflow: hidden;
+			cursor: pointer;
+			user-select: none;
+		}
+		.content{
+			height: 100%;
+			position: absolute;
+			left: 0;
+		}
+		span{
+			display: inline-block;
+			position: absolute;
+			height: 100%;
+			width: 53px;
+			text-align: center;
+			line-height: 34px;
+			color: #fff;
+		}
+		.on{
+			left: 0;
+		}
+		.middle{
+			left: 53px;
+			background-color: #fff;
+		}
+		.off{
+			left: 106px;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<my-switch on-text="开" off-text="关" on-color="#6f9" off-color="#69f" border-radius="5px" v-on:click="add"></my-switch>
+	</div>
+	<script type="text/template" id="my-switch">
+		<div class="box" @click="changeLeft" :style="{borderRadius: myborderRadius}">
+			<div class="content" :style="{left: contentLeft}">
+				<span class="on" :style="{backgroundColor: myonColor}">{{ myon }}</span>
+				<span class="middle"></span>
+				<span class="off" :style="{backgroundColor: myoffColor}">{{ myoff }}</span>
+			</div>
+		</div>
+	</script>
+	<script src="js/vue.js"></script>
+	<script>
+		Vue.component("my-switch",{
+			props: ["onText","offText","onColor","offColor","borderRadius"],
+			template: "#my-switch",
+			data: function(){
+				return {
+					myon: "",
+					myoff: "",
+					myonColor: "",
+					myoffColor: "",
+					myborderRadius: "",
+					contentLeft: "0px",
+					timer: null,
+					onOff: true
+				}
+			},
+			mounted: function() {
+				this.init();
+			},
+			methods: {
+				init: function (){
+					// 文字初始化
+					this.myon=!this.onText ? "on" : this.onText;
+					this.myoff=!this.offText ? "off" : this.offText;
+					// 背景颜色初始化
+					this.myonColor=!this.onColor ? "#f69" : this.onColor;
+					this.myoffColor=!this.offColor ? "#f69" : this.offColor;
+					// 圆角
+					this.myborderRadius=!this.borderRadius ? "0px" : this.borderRadius;
+				},
+				changeLeft: function(){
+					// 触发点击事件
+					this.$emit("click");
+					// 执行动画
+					clearInterval(this.timer);
+					if(this.onOff){
+						this.timer=setInterval(function (){
+							var l=parseInt(this.contentLeft);
+							if(l<-53){
+								clearInterval(this.timer);
+							}else{
+								this.contentLeft=l-2+"px";
+							}
+						}.bind(this), 10)
+					}else{
+						this.timer=setInterval(function (){
+							var l=parseInt(this.contentLeft);
+							if(l>=0){
+								clearInterval(this.timer);
+							}else{
+								this.contentLeft=l+2+"px";
+							}
+							
+						}.bind(this), 10)
+					}
+					this.onOff=!this.onOff;
+				}
+			}
+		})
+	</script>
+	<script>
+		new Vue({
+			el: "#app",
+			methods: {
+				add() {
+					console.log(666)
+				}
+			}
+		})
+	</script>
+</body>
+</html>
