@@ -59,8 +59,6 @@
 					this.myheight=!this.height ? "34px" : this.height;
 				},
 				changeLeft: function(){
-					// 触发点击事件
-					this.$emit("click");
 					// 执行动画
 					clearInterval(this.timer);
 					if(this.onOff){
@@ -84,6 +82,8 @@
 						}.bind(this), 10)
 					}
 					this.onOff=!this.onOff;
+					// 触发点击事件
+					this.$emit("click");
 				}
 			}
 		})
