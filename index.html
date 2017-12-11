@@ -3,62 +3,24 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
-	<style>
-		.box{
-			width: 106px;
-			height: 34px;
-			border: 1px solid #ccc;
-			margin: 0 auto;
-			box-sizing: border-box;
-			position: relative;
-			overflow: hidden;
-			cursor: pointer;
-			user-select: none;
-		}
-		.content{
-			height: 100%;
-			position: absolute;
-			left: 0;
-		}
-		span{
-			display: inline-block;
-			position: absolute;
-			height: 100%;
-			width: 53px;
-			text-align: center;
-			line-height: 34px;
-			color: #fff;
-		}
-		.on{
-			left: 0;
-		}
-		.middle{
-			left: 53px;
-			background-color: #fff;
-		}
-		.off{
-			left: 106px;
-		}
-	</style>
 </head>
 <body>
 	<div id="app">
-		<my-switch on-text="开" off-text="关" on-color="#6f9" off-color="#69f" border-radius="5px" v-on:click="add"></my-switch>
+		<component-switch on-text="开" off-text="关" on-color="#6f9" off-color="#69f" border-radius="5px" v-on:click="add" width="100px" height="34px"></component-switch>
 	</div>
-	<script type="text/template" id="my-switch">
-		<div class="box" @click="changeLeft" :style="{borderRadius: myborderRadius}">
-			<div class="content" :style="{left: contentLeft}">
-				<span class="on" :style="{backgroundColor: myonColor}">{{ myon }}</span>
-				<span class="middle"></span>
-				<span class="off" :style="{backgroundColor: myoffColor}">{{ myoff }}</span>
-			</div>
-		</div>
-	</script>
 	<script src="js/vue.js"></script>
 	<script>
-		Vue.component("my-switch",{
-			props: ["onText","offText","onColor","offColor","borderRadius"],
-			template: "#my-switch",
+		Vue.component("component-switch",{
+			template: `
+				<div class="box" @click="changeLeft" :style="{borderRadius: myborderRadius, width: mywidth, height: myheight}" style="border: 1px solid #ccc; margin: 0 auto;box-sizing: border-box;position: relative;overflow: hidden;cursor: pointer;user-select: none;">
+					<div class="content" :style="{left: contentLeft, height: myheight, height: myheight}" style="position: absolute;left: 0;">
+						<span class="on" :style="{backgroundColor: myonColor, width: spanWidth, height: myheight, lineHeight: myheight}" style="position: absolute;text-align: center;color: #fff;left: 0;">{{ myon }}</span>
+						<span class="middle" :style="{width: spanWidth, height: myheight, lineHeight: myheight, left: spanWidth}" style="position: absolute;text-align: center;color: #fff;background-color: #fff;"></span>
+						<span class="off" :style="{backgroundColor: myoffColor, width: spanWidth, height: myheight, lineHeight: myheight, left: mywidth}" style="position: absolute;text-align: center;color: #fff;">{{ myoff }}</span>
+					</div>
+				</div>
+			`,
+			props: ["onText","offText","onColor","offColor","borderRadius","width","height"],
 			data: function(){
 				return {
 					myon: "",
@@ -66,9 +28,16 @@
 					myonColor: "",
 					myoffColor: "",
 					myborderRadius: "",
+					mywidth: "",
+					myheight: "",
 					contentLeft: "0px",
 					timer: null,
 					onOff: true
+				}
+			},
+			computed: {
+				spanWidth: function(){
+					return parseInt(this.mywidth)/2+'px'
 				}
 			},
 			mounted: function() {
@@ -84,6 +53,9 @@
 					this.myoffColor=!this.offColor ? "#f69" : this.offColor;
 					// 圆角
 					this.myborderRadius=!this.borderRadius ? "0px" : this.borderRadius;
+					// 大小
+					this.mywidth=!this.width ? "106px" : this.width;
+					this.myheight=!this.height ? "34px" : this.height;
 				},
 				changeLeft: function(){
 					// 触发点击事件
@@ -93,7 +65,7 @@
 					if(this.onOff){
 						this.timer=setInterval(function (){
 							var l=parseInt(this.contentLeft);
-							if(l<-53){
+							if(l<-1*parseInt(this.spanWidth)){
 								clearInterval(this.timer);
 							}else{
 								this.contentLeft=l-2+"px";
@@ -118,9 +90,14 @@
 	<script>
 		new Vue({
 			el: "#app",
+			data: {
+				arr: [],
+			},
 			methods: {
 				add() {
-					console.log(666)
+					for (var i = 10000; i >= 0; i--) {
+						this.arr.push(i);
+					}
 				}
 			}
 		})
